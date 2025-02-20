@@ -1,34 +1,61 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/U6YJFoaW)
+# 🚗 **Car Rental WebApi** 
 
-# asw20242T1
+Bem-vindo ao Car Rental WebApi! 
+Aqui, você vai gerenciar e alugar carros de forma prática. 
+Vamos começar?
 
-## Database PostgreSQL
+---
 
-É necessário criar um database com o seguinte nome:
+## 📦 **Dependências**
 
-```
+Antes de rodar o projeto, verifique se as seguintes dependências estão instaladas:
+
+- **PostgreSQL**: É necessário ter o **PostgreSQL** instalado e rodando localmente para que o banco de dados seja configurado corretamente.
+
+---
+
+## 🗄️ **Configuração do Banco de Dados - PostgreSQL**
+
+1. **Crie um banco de dados com o seguinte nome:**
+
+```bash
 car-rental-system
 ```
 
-Obs.: no superusuário `postgres` senha `postgres`, rodando na porta 5432 (de acordo com o `application.yml`).
+2. **Configurações do banco de dados:**
 
-## Run in terminal 
+- **Usuário (superusuário):** `postgres`
+- **Senha:** `postgres`
+- **Porta:** 5432 
+
+Obs.: essas são as configurações definidas no arquivo `src/main/resources/application.yml`)
+
+Certifique-se de que o PostgreSQL esteja rodando corretamente em sua máquina local para que o backend se conecte ao banco de dados.
+
+---
+
+## 🚀 **Rodando o Projeto no Terminal**
+
+Com as dependências configuradas, vamos rodar o projeto. Para isso, execute o seguinte comando:
 
 ```bash
 mvn clean spring-boot:run
 ```
 
-Obs.: o clean é opcional, utilizado para limpar o build quando necessário.
+Obs.: O `clean` é opcional, mas recomendado caso precise limpar o build e começar de novo.
 
-## Swagger UI
+---
 
-```
+## 🔧 Acessando a API - Swagger UI
+Agora que o BackEnd está rodando, você pode visualizar e testar a API diretamente no Swagger UI!
+
+Acesse em:
 http://localhost:8090/swagger-ui.html
-```
 
-## Admin Base
+---
 
-```
-username: admin
-password: admin
-```
+## 🔑 Credenciais de Administrador
+Quando o sistema for inicializado, serão criadas automaticamente credenciais de administração, se não existirem. Você pode acessar essas funcionalidades realizando login com o perfil de administrador:
+
+- Usuário: `admin`
+- Senha: `admin`
