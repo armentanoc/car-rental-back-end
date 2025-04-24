@@ -5,9 +5,6 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import br.ucsal.domain.logs.Action;
-import br.ucsal.domain.logs.ActionLog;
-import br.ucsal.infrastructure.IActionLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +13,7 @@ import br.ucsal.dto.users.*;
 import br.ucsal.infrastructure.IUserRepository;
 import br.ucsal.service.interfaces.IEncryptionService;
 import br.ucsal.service.interfaces.IUserService;
+import br.ucsal.domain.enums.Role;
 
 @Service
 public class UserService implements IUserService {
@@ -26,9 +24,6 @@ public class UserService implements IUserService {
 	@Autowired
 	private IEncryptionService encryptor;
 
-	@Autowired
-	private IActionLogRepository actionLogRepository;
-
 	@Override
 	public AddUserResponse add(UserRequest request) {
 
@@ -36,7 +31,7 @@ public class UserService implements IUserService {
 
 		var optionalAdmin = repository.findById(request.adminId());
 
-		if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != UserRole.ADMINISTRADOR)
+		if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != Role.ADMIN)
 			return new AddUserResponse(false, "Usuário não encontrado ou não autorizado a realizar essa operação.", null);
 
 		var admin = optionalAdmin.get();
@@ -49,8 +44,6 @@ public class UserService implements IUserService {
 
 		try {
 			repository.save(user);
-			var log = new ActionLog(admin, "users", user.getId(), Action.CREATE, "Usuário criado com sucesso.");
-			actionLogRepository.save(log);
 			response = new AddUserResponse(true, "Usuário criado com sucesso", user.getId());
 		} catch (Exception ex) {
 			if (ex.getMessage().contains("duplicar valor da chave") || ex.getMessage().contains("duplicated key")) {
@@ -96,7 +89,7 @@ public class UserService implements IUserService {
 		try {
 			var optionalAdmin = repository.findById(request.adminId());
 
-			if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != UserRole.ADMINISTRADOR)
+			if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != Role.ADMIN)
 				return new DeleteResponse(false, "Usuário não encontrado ou não autorizado a realizar essa operação.");
 
 			var admin = optionalAdmin.get();
@@ -109,9 +102,6 @@ public class UserService implements IUserService {
 			var user = optionalUser.get();
 
 			repository.delete(user);
-
-			var log = new ActionLog(admin, "users", userId, Action.DELETE, "Usuário excluído com sucesso");
-			actionLogRepository.save(log);
 
 			return new DeleteResponse(true, "Usuário excluído com sucesso.");
 		}
@@ -131,7 +121,7 @@ public class UserService implements IUserService {
 
 		var optionalAdmin = repository.findById(request.adminId());
 
-		if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != UserRole.ADMINISTRADOR)
+		if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != Role.ADMIN)
 			return new UpdateResponse(false, "Usuário não encontrado ou não autorizado a realizar essa operação.");
 
 		var admin = optionalAdmin.get();
@@ -152,13 +142,11 @@ public class UserService implements IUserService {
 			user.setName(request.name());
 			user.setRole(request.role());
 			user.setUsername(request.username());
+
 			if(request.password() != null) {
 				user.setPassword(encryptor.encode(request.password()));
 			}
 			repository.save(user);
-
-			var log = new ActionLog(admin, "users", user.getId(), Action.UPDATE, "Usuário atualizado com sucesso. Antes: "+userBefore.toString()+" Depois: "+user.toString());
-			actionLogRepository.save(log);
 
 			response = new UpdateResponse(true, "Usuário atualizado com sucesso");
 		} catch (Exception ex) {

@@ -2,8 +2,6 @@ package br.ucsal.controller;
 
 import java.util.List;
 
-import br.ucsal.dto.requests.RequestResponse;
-import br.ucsal.service.interfaces.IRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +27,8 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 
-	@Autowired
-	private IRequestService requestService;
+	// @Autowired
+	// private IRequestService requestService;
 
 	@GetMapping("/{id}")
 	@Operation(summary = "Get user by ID", description = "Retrieve a user by their unique ID")
@@ -50,12 +48,12 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@GetMapping("/{id}/requests")
-	@Operation(summary = "Get requests associated to this specific user", description = "Retrieve all request associated with this specific user")
-	public ResponseEntity<List<RequestResponse>> getAllRequestsByUser(@PathVariable Long id) {
-		var response = requestService.getAllByUserId(id);
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-	}
+	// @GetMapping("/{id}/requests")
+	// @Operation(summary = "Get requests associated to this specific user", description = "Retrieve all request associated with this specific user")
+	// public ResponseEntity<List<RequestResponse>> getAllRequestsByUser(@PathVariable Long id) {
+	// 	var response = requestService.getAllByUserId(id);
+	// 	return ResponseEntity.status(HttpStatus.OK).body(response);
+	// }
 
 	@PostMapping
 	@Operation(summary = "Create a user", description = "Create a user passing all user information")

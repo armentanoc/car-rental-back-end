@@ -1,7 +1,7 @@
 package br.ucsal;
 
 import br.ucsal.domain.users.User;
-import br.ucsal.domain.users.UserRole;
+import br.ucsal.domain.enums.Role;
 import br.ucsal.infrastructure.IUserRepository;
 import br.ucsal.service.interfaces.IEncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (userRepository.findByusername("admin").isEmpty()) {
             var securePassword = encryptionService.encode("admin");
-            User admin = new User("Administrador", "admin@admin.com", "admin", securePassword, UserRole.ADMINISTRADOR);
+            User admin = new User("Administrador", "admin@admin.com", "admin", securePassword, Role.ADMIN);
             userRepository.save(admin);
             System.out.println("Default admin created.");
         } else {

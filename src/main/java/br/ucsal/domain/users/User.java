@@ -1,5 +1,6 @@
 package br.ucsal.domain.users;
 
+import br.ucsal.domain.enums.Role;
 import br.ucsal.domain.BaseEntity;
 import jakarta.persistence.*;
 
@@ -20,13 +21,13 @@ public class User extends BaseEntity {
 	private String securePassword;
 
 	@Column(nullable = false)
-	private UserRole role;
+	private Role role;
 
 	protected User() {
 		// default for JPA
 	}
 
-	public User(String name, String email, String username, String securePassword, UserRole role) {
+	public User(String name, String email, String username, String securePassword, Role role) {
 		this.name = name;
 		this.email = email;
 		this.username = username;
@@ -67,11 +68,11 @@ public class User extends BaseEntity {
 		}
 	}
 
-	public UserRole getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(UserRole role) {
+	public void setRole(Role role) {
 		if (role != null) {
 			this.role = role;
 		}
