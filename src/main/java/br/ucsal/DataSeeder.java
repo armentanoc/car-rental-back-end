@@ -57,7 +57,7 @@ public class DataSeeder implements CommandLineRunner {
             System.out.println("Default address created.");
 
             Client client = new Client();
-            client.setAddress(null);
+            client.setAddress(address);
             client.setDocumentNumber("12345");
             client.setDriverLicense("67890");
             client.setEmail(user.getEmail());
