@@ -26,7 +26,9 @@ public class Invoice extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
 
-    // Getters and Setters with null checks
+    public Invoice() {
+        // default for JPA
+    }
 
     public Payment getPayment() {
         return payment;

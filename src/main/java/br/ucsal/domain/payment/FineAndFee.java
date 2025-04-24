@@ -25,7 +25,9 @@ public class FineAndFee extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
 
-    // Getters and Setters with null checks
+    public FineAndFee() {
+        // default for JPA
+    }
 
     public Rental getRental() {
         return rental;

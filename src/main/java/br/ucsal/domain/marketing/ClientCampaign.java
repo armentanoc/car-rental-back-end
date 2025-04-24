@@ -1,6 +1,6 @@
 package br.ucsal.domain.marketing;
 
-import br.ucsal.domain.client.Client;
+import br.ucsal.domain.users.Client;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,8 +18,9 @@ public class ClientCampaign {
     @JoinColumn(name = "campaign_id")
     private MarketingCampaign campaign;
 
-    // Getters and Setters with null check
-
+    public ClientCampaign() {
+        // default for JPA
+    }
     public Client getClient() {
         return client;
     }

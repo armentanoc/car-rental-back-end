@@ -1,4 +1,4 @@
-package br.ucsal.infrastructure.rental;
+package br.ucsal.infrastructure;
 
 import br.ucsal.domain.rental.Contract;
 import br.ucsal.domain.rental.Rental;

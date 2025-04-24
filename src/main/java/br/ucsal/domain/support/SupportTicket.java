@@ -1,7 +1,7 @@
 package br.ucsal.domain.support;
 
 import br.ucsal.domain.BaseEntity;
-import br.ucsal.domain.client.Client;
+import br.ucsal.domain.users.Client;
 import br.ucsal.domain.enums.Status;
 import br.ucsal.domain.users.User;
 import jakarta.persistence.*;
@@ -34,7 +34,9 @@ public class SupportTicket extends BaseEntity {
     @Column(name = "resolution_details", columnDefinition = "TEXT")
     private String resolutionDetails;
 
-    // Getters and Setters with null checks
+    public SupportTicket() {
+        // default for JPA
+    }
 
     public Client getClient() {
         return client;

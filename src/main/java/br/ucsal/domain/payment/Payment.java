@@ -1,7 +1,6 @@
 package br.ucsal.domain.payment;
 
 import br.ucsal.domain.BaseEntity;
-import br.ucsal.domain.payment.*;
 import br.ucsal.domain.rental.Rental;
 import jakarta.persistence.*;
 
@@ -28,7 +27,9 @@ public class Payment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    // Getters and Setters with null checks
+    public Payment() {
+        // default for JPA
+    }
 
     public Rental getRental() {
         return rental;

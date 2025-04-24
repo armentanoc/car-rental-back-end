@@ -1,6 +1,6 @@
-package br.ucsal.infrastructure.client;
+package br.ucsal.infrastructure;
 
-import br.ucsal.domain.client.Client;
+import br.ucsal.domain.users.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

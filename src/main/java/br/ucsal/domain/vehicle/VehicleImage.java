@@ -2,7 +2,6 @@ package br.ucsal.domain.vehicle;
 
 import br.ucsal.domain.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -20,7 +19,9 @@ public class VehicleImage extends BaseEntity {
     @Size(max = 500) 
     private String description;
 
-    public VehicleImage() {}
+    public VehicleImage() {
+        // default for JPA
+    }
 
     public VehicleImage(Vehicle vehicle, String imageUrl, String description) {
         this.vehicle = vehicle;

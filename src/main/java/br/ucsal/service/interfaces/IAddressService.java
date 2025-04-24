@@ -1,6 +1,6 @@
-package br.ucsal.service.client;
+package br.ucsal.service.interfaces;
 
-import br.ucsal.domain.client.Address;
+import br.ucsal.domain.users.Address;
 
 public interface IAddressService {
 

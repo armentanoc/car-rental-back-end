@@ -1,10 +1,9 @@
 package br.ucsal.domain.rental;
 
 import br.ucsal.domain.BaseEntity;
-import br.ucsal.domain.client.Client;
+import br.ucsal.domain.users.Client;
 import br.ucsal.domain.vehicle.Vehicle;
 import jakarta.persistence.*;
-import br.ucsal.domain.rental.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -44,7 +43,9 @@ public class Rental extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    // Getters and Setters with null checks
+    public Rental() {
+        // default for JPA
+    }
 
     public Vehicle getVehicle() {
         return vehicle;

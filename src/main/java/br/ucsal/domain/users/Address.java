@@ -1,4 +1,4 @@
-package br.ucsal.domain.client;
+package br.ucsal.domain.users;
 
 import br.ucsal.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -14,7 +14,9 @@ public class Address extends BaseEntity {
     private String country;
     private String complement;
 
-    // Getters and Setters with null checks
+    public Address() {
+        // default for JPA
+    }
 
     public String getStreet() {
         return street;

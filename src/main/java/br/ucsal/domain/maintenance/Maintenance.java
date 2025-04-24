@@ -41,6 +41,10 @@ public class Maintenance extends BaseEntity {
         return vehicle;
     }
 
+    public Maintenance() {
+        // default for JPA
+    }
+
     public void setVehicle(Vehicle vehicle) {
         if (vehicle != null) {
             this.vehicle = vehicle;

@@ -1,7 +1,6 @@
-package br.ucsal.domain.client;
+package br.ucsal.domain.users;
 
 import br.ucsal.domain.BaseEntity;
-import br.ucsal.domain.users.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -32,7 +31,9 @@ public class Client extends BaseEntity {
     @Column(name = "license_expiry_date")
     private LocalDateTime licenseExpiryDate;
 
-    // Getters and setters with null checks
+    public Client() {
+        // default for JPA
+    }
 
     public User getUser() {
         return user;

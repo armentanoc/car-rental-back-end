@@ -1,4 +1,4 @@
-package br.ucsal.service.vehicle;
+package br.ucsal.service.interfaces;
 
 import br.ucsal.domain.vehicle.VehicleImage;
 

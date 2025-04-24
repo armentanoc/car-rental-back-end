@@ -1,4 +1,4 @@
-package br.ucsal.infrastructure.maintenance;
+package br.ucsal.infrastructure;
 
 import br.ucsal.domain.maintenance.Maintenance;
 import br.ucsal.domain.vehicle.Vehicle;

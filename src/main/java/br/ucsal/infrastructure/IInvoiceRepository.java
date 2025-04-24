@@ -1,4 +1,4 @@
-package br.ucsal.infrastructure.payment;
+package br.ucsal.infrastructure;
 
 import br.ucsal.domain.payment.Invoice;
 import br.ucsal.domain.payment.Payment;

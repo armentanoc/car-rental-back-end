@@ -1,7 +1,9 @@
-package br.ucsal.service.client;
+package br.ucsal.service;
 
-import br.ucsal.domain.client.Address;
-import br.ucsal.infrastructure.client.IAddressRepository;
+import br.ucsal.domain.users.Address;
+import br.ucsal.infrastructure.IAddressRepository;
+import br.ucsal.service.interfaces.IAddressService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

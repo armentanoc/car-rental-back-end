@@ -25,7 +25,9 @@ public class Contract extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String responsibilities;
 
-    // Getters and Setters with null checks
+    public Contract() {
+        // default for JPA
+    }
 
     public Rental getRental() {
         return rental;

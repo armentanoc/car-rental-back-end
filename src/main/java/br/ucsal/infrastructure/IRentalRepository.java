@@ -1,7 +1,7 @@
-package br.ucsal.infrastructure.rental;
+package br.ucsal.infrastructure;
 
 import br.ucsal.domain.rental.Rental;
-import br.ucsal.domain.client.Client;
+import br.ucsal.domain.users.Client;
 import br.ucsal.domain.vehicle.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

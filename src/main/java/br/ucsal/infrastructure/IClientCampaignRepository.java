@@ -1,4 +1,4 @@
-package br.ucsal.infrastructure.marketing;
+package br.ucsal.infrastructure;
 
 import br.ucsal.domain.marketing.ClientCampaign;
 import br.ucsal.domain.marketing.ClientCampaignId;

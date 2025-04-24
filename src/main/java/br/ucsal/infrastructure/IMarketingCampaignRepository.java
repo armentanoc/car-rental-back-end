@@ -1,4 +1,4 @@
-package br.ucsal.infrastructure.marketing;
+package br.ucsal.infrastructure;
 
 import br.ucsal.domain.marketing.MarketingCampaign;
 import org.springframework.data.jpa.repository.JpaRepository;

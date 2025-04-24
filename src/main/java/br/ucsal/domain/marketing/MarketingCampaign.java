@@ -24,7 +24,9 @@ public class MarketingCampaign extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    // Getters and Setters with null checks
+    public MarketingCampaign() {
+        // default for JPA
+    }
 
     public String getName() {
         return name;

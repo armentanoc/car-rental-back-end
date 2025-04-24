@@ -1,4 +1,4 @@
-package br.ucsal.infrastructure.vehicle;
+package br.ucsal.infrastructure;
 
 import br.ucsal.domain.vehicle.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
