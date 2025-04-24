@@ -1,17 +1,20 @@
 package br.ucsal.service.interfaces;
 
 import br.ucsal.domain.vehicle.VehicleImage;
+import br.ucsal.dto.image.VehicleImageRequest;
+import br.ucsal.dto.image.VehicleImageResponse;
+import br.ucsal.dto.users.DeleteResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IVehicleImageService {
 
-    VehicleImage save(VehicleImage vehicleImage);
+    VehicleImageResponse save(VehicleImageRequest vehicleImage);
 
-    Optional<VehicleImage> findById(Long id);
+    Optional<VehicleImageResponse> findById(Long id);
 
-    List<VehicleImage> findByVehicle(Long vehicleId);
+    List<VehicleImageResponse> findByVehicle(Long vehicleId);
 
-    void delete(Long id);
+    DeleteResponse delete(Long id);
 }

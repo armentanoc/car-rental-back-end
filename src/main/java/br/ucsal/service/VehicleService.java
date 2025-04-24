@@ -1,75 +1,83 @@
-// package br.ucsal.service;
+package br.ucsal.service;
 
-// import br.ucsal.domain.vehicle.Vehicle;
-// import br.ucsal.dto.vehicle.AddVehicleResponse;
-// import br.ucsal.dto.vehicle.UpdateResponse;
-// import br.ucsal.infrastructure.vehicle.IVehicleRepository;
-// import br.ucsal.service.VehicleImageService;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
+import br.ucsal.domain.vehicle.Vehicle;
+import br.ucsal.dto.users.DeleteResponse;
+import br.ucsal.dto.vehicle.AddVehicleResponse;
+import br.ucsal.dto.vehicle.DeleteRequest;
+import br.ucsal.dto.vehicle.VehicleRequest;
+import br.ucsal.dto.vehicle.VehicleResponse;
+import br.ucsal.infrastructure.IVehicleRepository;
+import br.ucsal.service.interfaces.IVehicleService;
 
-// @Service
-// public class VehicleService {
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-//     @Autowired
-//     private IVehicleRepository vehicleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-//     @Autowired
-//     private VehicleImageService vehicleImageService;
+@Service
+public class VehicleService implements IVehicleService {
 
-//     public AddVehicleResponse add(VehicleRequest request) {
-//         var vehicle = new Vehicle(
-//                 request.brand(),
-//                 request.model(),
-//                 request.year(),
-//                 request.color(),
-//                 request.licensePlate(),
-//                 request.chassiNumber(),
-//                 FuelTypeEnum.valueOf(request.fuelType()),
-//                 request.mileage(),
-//                 StatusEnum.valueOf(request.status()),
-//                 request.additionalFeatures(),
-//                 CategoryEnum.valueOf(request.category())
-//         );
+    @Autowired
+    private IVehicleRepository vehicleRepository;
 
-//         vehicleRepository.save(vehicle);
+    @Override
+    public AddVehicleResponse add(VehicleRequest request) {
+        var vehicle = new Vehicle();
+        vehicle.setBrand(request.brand());
+        vehicle.setAdditionalFeatures(request.additionalFeatures());
+        vehicle.setCategory(request.category());
+        vehicle.setChassiNumber(request.chassiNumber());
+        vehicle.setColor(request.color());
+        vehicle.setFuelType(request.fuelType());
+        vehicle.setLicensePlate(request.licensePlate());
+        vehicle.setMileage(request.mileage());
+        vehicle.setModel(request.model());
+        vehicle.setStatus(request.status());
+        vehicle.setYear(request.year());
+        vehicleRepository.save(vehicle);
+        return new AddVehicleResponse(true, "Veículo criado com sucesso.", vehicle.getId());
+    }
 
-//         if (request.getImageUrls() != null) {
-//             for (String imageUrl : request.getImageUrls()) {
-//                 vehicleImageService.addImage(vehicle.getId(), imageUrl, "Imagem do veículo");
-//             }
-//         }
+    @Override
+    public Optional<VehicleResponse> get(Long id) {
+        return vehicleRepository.findById(id).map(this::mapToResponse);
+    }
 
-//         return new AddVehicleResponse(true, "Veículo criado com sucesso.", vehicle.getId());
-//     }
+    @Override
+    public List<VehicleResponse> getAll() {
+        return vehicleRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 
-//     public UpdateResponse update(Long id, VehicleRequest request) {
-//         var optionalVehicle = vehicleRepository.findById(id);
-//         if (optionalVehicle.isEmpty()) {
-//             return new UpdateResponse(false, "Veículo não encontrado.");
-//         }
+    @Override
+    public DeleteResponse delete(Long id, DeleteRequest request) {
+        Optional<Vehicle> optionalVehicle = vehicleRepository.findById(id);
 
-//         var vehicle = optionalVehicle.get();
-//         vehicle.setBrand(request.brand());
-//         vehicle.setModel(request.model());
-//         vehicle.setYear(request.year());
-//         vehicle.setColor(request.color());
-//         vehicle.setLicensePlate(request.licensePlate());
-//         vehicle.setChassiNumber(request.chassiNumber());
-//         vehicle.setFuelType(FuelTypeEnum.valueOf(request.fuelType()));
-//         vehicle.setMileage(request.mileage());
-//         vehicle.setStatus(StatusEnum.valueOf(request.status()));
-//         vehicle.setAdditionalFeatures(request.additionalFeatures());
-//         vehicle.setCategory(CategoryEnum.valueOf(request.category()));
+        if (optionalVehicle.isPresent()) {
+            vehicleRepository.deleteById(id);
+            return new DeleteResponse(true, "Veículo deletado com sucesso.");
+        } else {
+            return new DeleteResponse(false, "Veículo não encontrado.");
+        }
+    }
 
-//         vehicleRepository.save(vehicle);
-
-//         if (request.getImageUrls() != null) {
-//             for (String imageUrl : request.getImageUrls()) {
-//                 vehicleImageService.addImage(vehicle.getId(), imageUrl, "Imagem atualizada do veículo");
-//             }
-//         }
-
-//         return new UpdateResponse(true, "Veículo atualizado com sucesso.");
-//     }
-// }
+    private VehicleResponse mapToResponse(Vehicle vehicle) {
+        return new VehicleResponse(
+            vehicle.getId(),
+            vehicle.getModel(),
+            vehicle.getBrand(),
+            vehicle.getColor(),
+            vehicle.getYear(),
+            vehicle.getLicensePlate(), 
+            vehicle.getChassiNumber(),
+            vehicle.getFuelType(),
+            vehicle.getMileage(),
+            vehicle.getAdditionalFeatures(),
+            vehicle.getStatus(),
+            vehicle.getCategory()
+        );
+    }    
+}

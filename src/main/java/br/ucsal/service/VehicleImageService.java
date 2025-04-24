@@ -1,64 +1,75 @@
-// package br.ucsal.service;
+package br.ucsal.service;
 
-// import br.ucsal.domain.vehicle.Vehicle;
-// import br.ucsal.domain.vehicle.VehicleImage;
-// import br.ucsal.dto.vehicle.AddVehicleImageResponse;
-// import br.ucsal.dto.vehicle.DeleteResponse;
-// import br.ucsal.dto.vehicle.UpdateResponse;
-// import br.ucsal.infrastructure.vehicle.IVehicleImageRepository;
-// import br.ucsal.infrastructure.vehicle.IVehicleRepository;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
+import br.ucsal.domain.vehicle.VehicleImage;
+import br.ucsal.dto.image.VehicleImageRequest;
+import br.ucsal.dto.image.VehicleImageResponse;
+import br.ucsal.dto.users.DeleteResponse;
+import br.ucsal.infrastructure.IVehicleImageRepository;
+import br.ucsal.infrastructure.IVehicleRepository;
+import br.ucsal.service.interfaces.IVehicleImageService;
 
-// import java.util.List;
-// import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-// @Service
-// public class VehicleImageService {
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-//     @Autowired
-//     private IVehicleImageRepository vehicleImageRepository;
+@Service
+public class VehicleImageService implements IVehicleImageService {
 
-//     @Autowired
-//     private IVehicleRepository vehicleRepository;
+    @Autowired
+    private IVehicleImageRepository vehicleImageRepository;
 
-//     public AddVehicleImageResponse addImage(Long vehicleId, String imageUrl, String description) {
-//         var vehicle = vehicleRepository.findById(vehicleId).orElse(null);
-//         if (vehicle == null) {
-//             return new AddVehicleImageResponse(false, "Veículo não encontrado.");
-//         }
+    @Autowired
+    private IVehicleRepository vehicleRepository;
 
-//         VehicleImage vehicleImage = new VehicleImage(vehicle, imageUrl, description);
-//         vehicleImageRepository.save(vehicleImage);
+    @Override
+    public VehicleImageResponse save(VehicleImageRequest request) {
+        var vehicle = vehicleRepository.findById(request.vehicleId()).orElse(null);
+        if (vehicle == null) {
+            return new VehicleImageResponse(null, null, null, null, "Veículo não encontrado.", false);
+        }
 
-//         return new AddVehicleImageResponse(true, "Imagem registrada com sucesso.", vehicleImage.getId());
-//     }
+        VehicleImage vehicleImage = new VehicleImage(vehicle, request.url(), request.description());
+        vehicleImageRepository.save(vehicleImage);
 
-//     public List<VehicleImage> getImagesByVehicle(Long vehicleId) {
-//         return vehicleImageRepository.findByVehicleId(vehicleId);
-//     }
+        return new VehicleImageResponse(vehicleImage.getId(), vehicle.getId(), vehicleImage.getImageUrl(),
+                vehicleImage.getDescription(), "Veículo localizado", true);
+    }
 
-//     public DeleteResponse deleteImage(Long imageId) {
-//         var optionalVehicleImage = vehicleImageRepository.findById(imageId);
-//         if (optionalVehicleImage.isEmpty()) {
-//             return new DeleteResponse(false, "Imagem não encontrada.");
-//         }
+    @Override
+    public List<VehicleImageResponse> findByVehicle(Long vehicleId) {
+        return vehicleImageRepository.findByVehicleId(vehicleId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 
-//         vehicleImageRepository.delete(optionalVehicleImage.get());
+    @Override
+    public DeleteResponse delete(Long imageId) {
+        var optionalVehicleImage = vehicleImageRepository.findById(imageId);
+        if (optionalVehicleImage.isEmpty()) {
+            return new DeleteResponse(false, "Imagem não encontrada.");
+        }
 
-//         return new DeleteResponse(true, "Imagem excluída com sucesso.");
-//     }
+        vehicleImageRepository.delete(optionalVehicleImage.get());
 
-//     public UpdateResponse updateImage(Long imageId, String newDescription) {
-//         var optionalVehicleImage = vehicleImageRepository.findById(imageId);
-//         if (optionalVehicleImage.isEmpty()) {
-//             return new UpdateResponse(false, "Imagem não encontrada.");
-//         }
+        return new DeleteResponse(true, "Imagem excluída com sucesso.");
+    }
 
-//         var vehicleImage = optionalVehicleImage.get();
-//         vehicleImage.setDescription(newDescription);
-//         vehicleImageRepository.save(vehicleImage);
+    @Override
+    public Optional<VehicleImageResponse> findById(Long id) {
+        return vehicleImageRepository.findById(id).map(this::mapToResponse);
+    }
 
-//         return new UpdateResponse(true, "Imagem atualizada com sucesso.");
-//     }
-// }
+    private VehicleImageResponse mapToResponse(VehicleImage vehicle) {
+        return new VehicleImageResponse(
+                vehicle.getId(),
+                vehicle.getVehicle().getId(),
+                vehicle.getImageUrl(),
+                vehicle.getDescription(),
+                "Veículo encontrado",
+                true);
+    }
+}
