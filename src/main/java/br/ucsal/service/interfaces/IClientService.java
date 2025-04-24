@@ -4,15 +4,10 @@ import br.ucsal.domain.users.Client;
 
 import java.util.List;
 import java.util.Optional;
-import br.ucsal.dto.users.DeleteResponse;
 
 public interface IClientService {
 
-    Client add(Client client);
-
-    Optional<Client> get(Long clientId);
+    Optional<Client> getByUserId(Long userId);
 
     List<Client> getAll();
-
-    DeleteResponse delete(Long clientId);
 }

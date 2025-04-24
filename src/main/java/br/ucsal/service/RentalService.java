@@ -1,102 +1,115 @@
-// package br.ucsal.service;
+package br.ucsal.service;
 
-// import br.ucsal.domain.rental.Rental;
-// import br.ucsal.dto.rental.*;
-// import br.ucsal.infrastructure.rental.IRentalRepository;
-// import br.ucsal.infrastructure.vehicle.IVehicleRepository;
-// import br.ucsal.service.interfaces.IRentalService;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
+import br.ucsal.domain.rental.Rental;
+import br.ucsal.domain.rental.Status;
+import br.ucsal.dto.rental.*;
+import br.ucsal.dto.users.DeleteResponse;
+import br.ucsal.infrastructure.IRentalRepository;
+import br.ucsal.infrastructure.IVehicleRepository;
+import br.ucsal.infrastructure.IClientRepository;
+import br.ucsal.service.interfaces.IRentalService;
 
-// import java.util.List;
-// import java.util.Optional;
-// import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-// @Service
-// public class RentalService implements IRentalService {
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-//     @Autowired
-//     private IRentalRepository rentalRepository;
+@Service
+public class RentalService implements IRentalService {
 
-//     @Autowired
-//     private IVehicleRepository vehicleRepository;
+    @Autowired
+    private IRentalRepository rentalRepository;
 
-//     @Override
-//     public AddRentalResponse add(RentalRequest request) {
+    @Autowired
+    private IVehicleRepository vehicleRepository;
 
-//         var vehicle = vehicleRepository.findById(request.vehicleId()).orElse(null);
-//         if (vehicle == null) {
-//             return new AddRentalResponse(false, "Veículo não encontrado.");
-//         }
+    @Autowired
+    private IClientRepository clientRepository;
 
-//         var rental = new Rental(
-//                 vehicle,
-//                 request.rentalDate(),
-//                 request.returnDate(),
-//                 request.totalAmount(),
-//                 request.renterName()
-//         );
+    @Override
+    public AddRentalResponse add(RentalRequest request) {
+        var vehicle = vehicleRepository.findById(request.vehicleId()).orElse(null);
+        var client = clientRepository.findById(request.clientId()).orElse(null);
 
-//         rentalRepository.save(rental);
+        if (vehicle == null) {
+            return new AddRentalResponse(false, "Veículo não encontrado.", null);
+        }
 
-//         return new AddRentalResponse(true, "Aluguel registrado com sucesso.", rental.getId());
-//     }
+        if (client == null) {
+            return new AddRentalResponse(false, "Cliente não encontrado.", null);
+        }
 
-//     @Override
-//     public Optional<RentalResponse> get(Long id) {
-//         return rentalRepository.findById(id).map(r -> 
-//                 new RentalResponse(
-//                         r.getId(),
-//                         r.getVehicle().getId(),
-//                         r.getRentalDate(),
-//                         r.getReturnDate(),
-//                         r.getTotalAmount(),
-//                         r.getRenterName()
-//                 ));
-//     }
+        var conflictingRentals = rentalRepository.findByVehicle(vehicle).stream()
+                .filter(r -> (r.getStatus() == Status.RESERVED || r.getStatus() == Status.CONFIRMED)
+                        && datesOverlap(r.getStartDate(), r.getEndDate(), request.startDate(), request.endDate()))
+                .toList();
 
-//     @Override
-//     public List<RentalResponse> getAll() {
-//         return rentalRepository.findAll().stream()
-//                 .map(r -> new RentalResponse(
-//                         r.getId(),
-//                         r.getVehicle().getId(),
-//                         r.getRentalDate(),
-//                         r.getReturnDate(),
-//                         r.getTotalAmount(),
-//                         r.getRenterName()
-//                 ))
-//                 .collect(Collectors.toList());
-//     }
+        if (!conflictingRentals.isEmpty()) {
+            return new AddRentalResponse(false, "Já existe um aluguel reservado ou confirmado para esse veículo nesse período.", null);
+        }
 
-//     @Override
-//     public DeleteResponse delete(Long id) {
-//         var optionalRental = rentalRepository.findById(id);
-//         if (optionalRental.isEmpty()) {
-//             return new DeleteResponse(false, "Aluguel não encontrado.");
-//         }
+        var rental = new Rental();
+        rental.setVehicle(vehicle);
+        rental.setClient(client);
+        rental.setStartDate(request.startDate());
+        rental.setEndDate(request.endDate());
+        rental.setInitialMileage(request.initialMileage());
+        rental.setFinalMileage(request.finalMileage());
+        rental.setInitialFuelLevel(request.initialFuelLevel());
+        rental.setFinalFuelLevel(request.finalFuelLevel());
+        rental.setTotalAmount(request.totalAmount());
+        rental.setStatus(Status.RESERVED);
 
-//         rentalRepository.delete(optionalRental.get());
+        rentalRepository.save(rental);
 
-//         return new DeleteResponse(true, "Aluguel removido com sucesso.");
-//     }
+        return new AddRentalResponse(true, "Aluguel reservado com sucesso.", rental.getId());
+    }
 
-//     @Override
-//     public UpdateResponse update(Long id, RentalRequest request) {
+    @Override
+    public Optional<RentalResponse> get(Long id) {
+        return rentalRepository.findById(id).map(this::mapToResponse);
+    }
 
-//         var optionalRental = rentalRepository.findById(id);
-//         if (optionalRental.isEmpty()) {
-//             return new UpdateResponse(false, "Aluguel não encontrado.");
-//         }
+    @Override
+    public List<RentalResponse> getAll() {
+        return rentalRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 
-//         var rental = optionalRental.get();
-//         rental.setRentalDate(request.rentalDate());
-//         rental.setReturnDate(request.returnDate());
-//         rental.setTotalAmount(request.totalAmount());
-//         rental.setRenterName(request.renterName());
+    @Override
+    public DeleteResponse delete(Long id, br.ucsal.dto.rental.DeleteRequest request) {
+        var optionalRental = rentalRepository.findById(id);
 
-//         rentalRepository.save(rental);
+        if (optionalRental.isEmpty()) {
+            return new DeleteResponse(false, "Aluguel não encontrado.");
+        }
 
-//         return new UpdateResponse(true, "Aluguel atualizado com sucesso.");
-//     }
-// }
+        rentalRepository.delete(optionalRental.get());
+        return new DeleteResponse(true, "Aluguel removido com sucesso.");
+    }
+
+    private RentalResponse mapToResponse(Rental r) {
+        return new RentalResponse(
+                r.getId(),
+                r.getVehicle().getId(),
+                r.getClient().getId(),
+                r.getStartDate(),
+                r.getEndDate(),
+                r.getInitialMileage(),
+                r.getFinalMileage(),
+                r.getInitialFuelLevel(),
+                r.getFinalFuelLevel(),
+                r.getTotalAmount(),
+                r.getStatus());
+    }
+
+    private boolean datesOverlap(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
+        return !start1.isAfter(end2) && !start2.isAfter(end1);
+    }
+
+}

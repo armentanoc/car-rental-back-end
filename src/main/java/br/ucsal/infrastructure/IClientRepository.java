@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface IClientRepository extends JpaRepository<Client, Long> {
     Optional<Client> findByDocumentNumber(String documentNumber);
+    Optional<Client> findByUserId(Long userId);
     List<Client> findAllByOrderByIdAsc();
 }

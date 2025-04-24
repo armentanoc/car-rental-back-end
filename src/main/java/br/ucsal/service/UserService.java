@@ -34,8 +34,6 @@ public class UserService implements IUserService {
 		if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != Role.ADMIN)
 			return new AddUserResponse(false, "Usuário não encontrado ou não autorizado a realizar essa operação.", null);
 
-		var admin = optionalAdmin.get();
-
 		if (!isValidEmailAddress(request.email()))
 			return new AddUserResponse(false, "E-mail informado não é válido", null);
 
