@@ -1,6 +1,5 @@
 package br.ucsal.service.interfaces;
 
-import br.ucsal.domain.vehicle.VehicleImage;
 import br.ucsal.dto.image.VehicleImageRequest;
 import br.ucsal.dto.image.VehicleImageResponse;
 import br.ucsal.dto.users.DeleteResponse;

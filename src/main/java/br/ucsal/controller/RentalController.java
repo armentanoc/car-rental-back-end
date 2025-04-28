@@ -2,7 +2,6 @@ package br.ucsal.controller;
 
 import br.ucsal.dto.NotFoundResponse;
 import br.ucsal.dto.rental.*;
-import br.ucsal.dto.rental.DeleteRequest;
 import br.ucsal.service.interfaces.IRentalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,4 +60,23 @@ public class RentalController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @GetMapping("/client/{clientId}")
+    @Operation(summary = "List rentals for a client", description = "Retrieve rentals for a specific client, ordered by status priority.")
+    public ResponseEntity<List<RentalResponse>> getClientRentals(@PathVariable Long clientId) {
+        var rentals = rentalService.getRentalsByClientOrdered(clientId);
+        return ResponseEntity.ok(rentals);
+    }
+
+    @PostMapping("/available")
+    @Operation(summary = "List available vehicles", description = "Retrieve all vehicles available for rent in a given date range.")
+    public ResponseEntity<?> getAvailableVehicles(@RequestBody AvailabilityRequest request) {
+        if (request.startDate() == null || request.endDate() == null) {
+            return ResponseEntity.badRequest().body("Both startDate and endDate are required.");
+        }
+
+        var availableVehicles = rentalService.getAvailableVehicles(request);
+        return ResponseEntity.ok(availableVehicles);
+    }
+
 }

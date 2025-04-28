@@ -2,6 +2,7 @@ package br.ucsal.service;
 
 import br.ucsal.domain.rental.Rental;
 import br.ucsal.domain.rental.Status;
+import br.ucsal.domain.vehicle.Vehicle;
 import br.ucsal.dto.rental.*;
 import br.ucsal.dto.users.DeleteResponse;
 import br.ucsal.infrastructure.IRentalRepository;
@@ -48,7 +49,8 @@ public class RentalService implements IRentalService {
                 .toList();
 
         if (!conflictingRentals.isEmpty()) {
-            return new AddRentalResponse(false, "Já existe um aluguel reservado ou confirmado para esse veículo nesse período.", null);
+            return new AddRentalResponse(false,
+                    "Já existe um aluguel reservado ou confirmado para esse veículo nesse período.", null);
         }
 
         var rental = new Rental();
@@ -91,6 +93,36 @@ public class RentalService implements IRentalService {
 
         rentalRepository.delete(optionalRental.get());
         return new DeleteResponse(true, "Aluguel removido com sucesso.");
+    }
+
+    @Override
+    public List<Vehicle> getAvailableVehicles(AvailabilityRequest request) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (request.startDate().isBefore(now) || request.endDate().isBefore(now)) {
+            throw new IllegalArgumentException("Start date and end date must be in the future.");
+        }
+
+        var vehicles = rentalRepository.findAvailableVehiclesBetween(request.startDate(), request.endDate());
+
+        return vehicles.stream()
+                .filter(vehicle -> request.category().map(category -> vehicle.getCategory().equals(category))
+                        .orElse(true))
+                .filter(vehicle -> request.fuelType().map(fuelType -> vehicle.getFuelType().equals(fuelType))
+                        .orElse(true))
+                .filter(vehicle -> request.startYear().map(startYear -> vehicle.getYear() >= startYear)
+                        .orElse(true))
+                .filter(vehicle -> request.endYear().map(endYear -> vehicle.getYear() <= endYear)
+                        .orElse(true))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RentalResponse> getRentalsByClientOrdered(Long clientId) {
+        var rentals = rentalRepository.findByClientIdOrderByStatusPriority(clientId);
+        return rentals.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private RentalResponse mapToResponse(Rental r) {

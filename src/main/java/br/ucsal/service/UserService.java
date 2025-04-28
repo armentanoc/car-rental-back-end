@@ -90,8 +90,6 @@ public class UserService implements IUserService {
 			if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != Role.ADMIN)
 				return new DeleteResponse(false, "Usuário não encontrado ou não autorizado a realizar essa operação.");
 
-			var admin = optionalAdmin.get();
-
 			var optionalUser = repository.findById(userId);
 
 			if (optionalUser.isEmpty())
@@ -122,8 +120,6 @@ public class UserService implements IUserService {
 		if(optionalAdmin.isEmpty() || optionalAdmin.get().getRole() != Role.ADMIN)
 			return new UpdateResponse(false, "Usuário não encontrado ou não autorizado a realizar essa operação.");
 
-		var admin = optionalAdmin.get();
-
 		var optionalUser = repository.findById(userId);
 
 		if (optionalUser.isEmpty())
@@ -133,7 +129,6 @@ public class UserService implements IUserService {
 			return new UpdateResponse(false, "E-mail informado não é válido");
 
 		var user = optionalUser.get();
-		var userBefore = user.copy();
 
 		try {
 			user.setEmail(request.email());
