@@ -22,7 +22,7 @@ public class FineAndFee extends BaseEntity {
 
     private LocalDateTime date;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private InvoiceStatus status;
 
     public FineAndFee() {

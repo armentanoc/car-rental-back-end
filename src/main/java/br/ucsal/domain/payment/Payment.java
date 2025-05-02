@@ -24,7 +24,7 @@ public class Payment extends BaseEntity {
 
     private String method;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 
     public Payment() {

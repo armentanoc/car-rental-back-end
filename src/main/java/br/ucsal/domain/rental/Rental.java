@@ -40,7 +40,7 @@ public class Rental extends BaseEntity {
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 
     public Rental() {

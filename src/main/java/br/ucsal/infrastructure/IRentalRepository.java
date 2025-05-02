@@ -32,7 +32,7 @@ public interface IRentalRepository extends JpaRepository<Rental, Long> {
     @Query("""
                 SELECT r FROM Rental r
                 WHERE r.vehicle.id = :vehicleId
-                  AND (r.status = 'RESERVED' OR r.status = 'CONFIRMED')
+                  AND (r.status = 1 OR r.status = 2)
                   AND (:startDate <= r.endDate AND :endDate >= r.startDate)
             """)
     List<Rental> findConflictingRentals(Long vehicleId, LocalDateTime startDate, LocalDateTime endDate);
@@ -41,7 +41,7 @@ public interface IRentalRepository extends JpaRepository<Rental, Long> {
                 SELECT v FROM Vehicle v
                 WHERE v.id NOT IN (
                     SELECT r.vehicle.id FROM Rental r
-                    WHERE (r.status = 'RESERVED' OR r.status = 'CONFIRMED')
+                    WHERE (r.status = 1 OR r.status = 2)
                     AND (:startDate <= r.endDate AND :endDate >= r.startDate)
                 )
             """)

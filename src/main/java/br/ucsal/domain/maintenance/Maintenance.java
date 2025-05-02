@@ -26,7 +26,7 @@ public class Maintenance extends BaseEntity {
 
     private BigDecimal cost;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private MaintenanceStatus status;
 
     @Column(columnDefinition = "TEXT")

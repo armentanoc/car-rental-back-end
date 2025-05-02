@@ -23,7 +23,7 @@ public class Invoice extends BaseEntity {
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private InvoiceStatus status;
 
     public Invoice() {

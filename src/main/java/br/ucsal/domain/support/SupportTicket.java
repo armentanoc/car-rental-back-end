@@ -28,7 +28,7 @@ public class SupportTicket extends BaseEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 
     @Column(name = "resolution_details", columnDefinition = "TEXT")

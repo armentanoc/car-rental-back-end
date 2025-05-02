@@ -21,7 +21,7 @@ public class MarketingCampaign extends BaseEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 
     public MarketingCampaign() {
