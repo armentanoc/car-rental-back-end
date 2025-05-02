@@ -19,19 +19,18 @@ public class Vehicle extends BaseEntity {
     @Column(name = "chassi_number")
     private String chassiNumber;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "fuel_type")
     private FuelType fuelType;
 
     private Integer mileage;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
 
     @Column(name = "additional_features", columnDefinition = "TEXT")
     private String additionalFeatures;
 
-    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
     private Category category;
 
     public Vehicle() {
