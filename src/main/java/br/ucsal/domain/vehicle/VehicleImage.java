@@ -1,5 +1,8 @@
 package br.ucsal.domain.vehicle;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import br.ucsal.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -9,6 +12,7 @@ import jakarta.validation.constraints.Size;
 public class VehicleImage extends BaseEntity {
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 

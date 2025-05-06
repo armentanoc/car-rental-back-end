@@ -1,5 +1,7 @@
 package br.ucsal.domain.vehicle;
 
+import java.math.BigDecimal;
+
 import br.ucsal.domain.BaseEntity;
 import br.ucsal.domain.enums.Status;
 import jakarta.persistence.*;
@@ -32,6 +34,9 @@ public class Vehicle extends BaseEntity {
 
     @Column(name = "category")
     private Category category;
+
+    @Column(name = "daily_rate")
+    private BigDecimal dailyRate;
 
     public Vehicle() {
         // default for JPA
@@ -147,4 +152,13 @@ public class Vehicle extends BaseEntity {
         }
     }
 
+    public BigDecimal getDailyRate() {
+        return dailyRate;
+    }
+
+    public void setDailyRate(BigDecimal dailyRate) {
+        if (dailyRate != null) {
+            this.dailyRate = dailyRate;
+        }
+    }
 }

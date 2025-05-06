@@ -36,6 +36,7 @@ public class VehicleService implements IVehicleService {
         vehicle.setModel(request.model());
         vehicle.setStatus(request.status());
         vehicle.setYear(request.year());
+        vehicle.setDailyRate(request.dailyRate());
         vehicleRepository.save(vehicle);
         return new AddVehicleResponse(true, "Veículo criado com sucesso.", vehicle.getId());
     }
@@ -77,7 +78,8 @@ public class VehicleService implements IVehicleService {
             vehicle.getMileage(),
             vehicle.getAdditionalFeatures(),
             vehicle.getStatus(),
-            vehicle.getCategory()
+            vehicle.getCategory(),
+            vehicle.getDailyRate()
         );
     }    
 }
