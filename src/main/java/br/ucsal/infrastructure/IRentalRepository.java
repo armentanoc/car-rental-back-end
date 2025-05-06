@@ -44,24 +44,24 @@ public interface IRentalRepository extends JpaRepository<Rental, Long> {
     List<Rental> findConflictingRentals(Long vehicleId, LocalDateTime startDate, LocalDateTime endDate);
 
     @Query("""
-                SELECT v FROM Vehicle v
-                WHERE v.id NOT IN (
-                    SELECT r.vehicle.id FROM Rental r
-                    WHERE (r.status = 1 OR r.status = 2)
-                    AND (:startDate <= r.endDate AND :endDate >= r.startDate)
-                )
-                AND (:category IS NULL OR v.category = :category)
-                AND (:fuelType IS NULL OR v.fuelType = :fuelType)
-                AND (:startYear IS NULL OR v.year >= :startYear)
-                AND (:endYear IS NULL OR v.year <= :endYear)
-            """)
-        Page<Vehicle> findAvailableVehiclesBetweenWithFilters(
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            Category category,
-            FuelType fuelType,
-            Integer startYear,
-            Integer endYear,
-            Pageable pageable
-        );
+        SELECT v FROM Vehicle v
+        LEFT JOIN Rental r ON v.id = r.vehicle.id 
+            AND (r.status = 1 OR r.status = 2)
+            AND (:startDate <= r.endDate AND :endDate >= r.startDate)
+        WHERE r.id IS NULL
+          AND (:category IS NULL OR v.category = :category)
+          AND (:fuelType IS NULL OR v.fuelType = :fuelType)
+          AND (:startYear IS NULL OR v.year >= :startYear)
+          AND (:endYear IS NULL OR v.year <= :endYear)
+    """)
+    Page<Vehicle> findAvailableVehiclesBetweenWithFilters(
+        LocalDateTime startDate,
+        LocalDateTime endDate,
+        Category category,
+        FuelType fuelType,
+        Integer startYear,
+        Integer endYear,
+        Pageable pageable
+    );
+    
 }
