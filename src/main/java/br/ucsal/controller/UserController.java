@@ -5,6 +5,8 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +28,6 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 
-	// @Autowired
-	// private IRequestService requestService;
-
 	@GetMapping("/{id}")
 	@Operation(summary = "Get user by ID", description = "Retrieve a user by their unique ID")
 	public ResponseEntity<?> getById(@PathVariable Long id) {
@@ -41,11 +40,11 @@ public class UserController {
 	}
 
 	@GetMapping
-	@Operation(summary = "Get users", description = "Retrieve all users")
-	public ResponseEntity<List<UserResponse>> getAll() {
-		var response = userService.getAll();
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-	}
+    @Operation(summary = "Get paginated users", description = "Retrieve users with pagination support")
+    public ResponseEntity<Page<UserResponse>> getAll(Pageable pageable) {
+        Page<UserResponse> response = userService.getAll(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
 	// @GetMapping("/{id}/requests")
 	// @Operation(summary = "Get requests associated to this specific user", description = "Retrieve all request associated with this specific user")

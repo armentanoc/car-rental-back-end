@@ -1,9 +1,7 @@
 package br.ucsal.service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +12,8 @@ import br.ucsal.infrastructure.IUserRepository;
 import br.ucsal.service.interfaces.IEncryptionService;
 import br.ucsal.service.interfaces.IUserService;
 import br.ucsal.domain.enums.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class UserService implements IUserService {
@@ -59,10 +59,17 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public List<UserResponse> getAll() {
-		var users = repository.findAllByOrderByIdAsc();
-		return users.stream().map(user -> new UserResponse(user.getId(), user.getName(), user.getEmail(),
-				user.getUsername(), user.getRole())).collect(Collectors.toList());
+	public Page<UserResponse> getAll(Pageable pageable) {
+		Page<User> usersPage = repository.findAll(pageable);
+		return usersPage.map(user ->
+			new UserResponse(
+				user.getId(),
+				user.getName(),
+				user.getEmail(),
+				user.getUsername(),
+				user.getRole()
+			)
+		);
 	}
 
 	@Override
