@@ -45,14 +45,7 @@ public class UserController {
         Page<UserResponse> response = userService.getAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-	// @GetMapping("/{id}/requests")
-	// @Operation(summary = "Get requests associated to this specific user", description = "Retrieve all request associated with this specific user")
-	// public ResponseEntity<List<RequestResponse>> getAllRequestsByUser(@PathVariable Long id) {
-	// 	var response = requestService.getAllByUserId(id);
-	// 	return ResponseEntity.status(HttpStatus.OK).body(response);
-	// }
-
+	
 	@PostMapping
 	@Operation(summary = "Create a user", description = "Create a user passing all user information")
 	public ResponseEntity<AddUserResponse> create(@RequestBody UserRequest dto) {
