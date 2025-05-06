@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,10 +49,9 @@ public class VehicleService implements IVehicleService {
     }
 
     @Override
-    public List<VehicleResponse> getAll() {
-        return vehicleRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<VehicleResponse> getAll(Pageable pageable) {
+        Page<Vehicle> vehiclesPage = vehicleRepository.findAll(pageable);
+        return vehiclesPage.map(this::mapToResponse);
     }
 
     @Override

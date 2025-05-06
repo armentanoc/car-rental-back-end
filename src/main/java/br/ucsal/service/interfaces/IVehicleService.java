@@ -2,8 +2,11 @@ package br.ucsal.service.interfaces;
 
 import br.ucsal.dto.vehicle.*;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import br.ucsal.dto.users.DeleteResponse;
 
 public interface IVehicleService {
@@ -12,7 +15,7 @@ public interface IVehicleService {
 
     Optional<VehicleResponse> get(Long id);
 
-    List<VehicleResponse> getAll();
+    Page<VehicleResponse> getAll(Pageable page);
 
     DeleteResponse delete(Long id, DeleteRequest request);
 }

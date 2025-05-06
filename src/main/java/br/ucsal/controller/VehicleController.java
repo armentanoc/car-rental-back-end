@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +34,9 @@ public class VehicleController {
     }
 
     @GetMapping
-    @Operation(summary = "List all vehicles", description = "Retrieve all registered vehicles.")
-    public ResponseEntity<List<VehicleResponse>> getAll() {
-        return ResponseEntity.ok(vehicleService.getAll());
+    @Operation(summary = "Get paginated vehicles", description = "Retrieve vehicles with pagination support")
+    public ResponseEntity<Page<VehicleResponse>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(vehicleService.getAll(pageable));
     }
 
     @PostMapping
