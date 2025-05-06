@@ -2,10 +2,11 @@ package br.ucsal.service.interfaces;
 
 import br.ucsal.domain.vehicle.Vehicle;
 import br.ucsal.dto.rental.*;
-
 import br.ucsal.dto.users.DeleteResponse;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 
 public interface IRentalService {
@@ -14,11 +15,11 @@ public interface IRentalService {
 
     Optional<RentalResponse> get(Long id);
 
-    List<RentalResponse> getAll();
+    Page<RentalResponse> getAll(Pageable pageable);
 
     DeleteResponse delete(Long id, DeleteRequest request);
 
-    List<Vehicle> getAvailableVehicles(AvailabilityRequest request);
+    Page<Vehicle> getAvailableVehicles(AvailabilityRequest request, Pageable pageable);
 
-    List<RentalResponse> getRentalsByClientOrdered(Long clientId);
+    Page<RentalResponse> getRentalsByClientOrdered(Long clientId, Pageable pageable);
 }

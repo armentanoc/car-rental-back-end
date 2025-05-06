@@ -11,12 +11,12 @@ import br.ucsal.infrastructure.IClientRepository;
 import br.ucsal.service.interfaces.IRentalService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RentalService implements IRentalService {
@@ -76,17 +76,13 @@ public class RentalService implements IRentalService {
     }
 
     @Override
-    public List<RentalResponse> getAll() {
-        return rentalRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<RentalResponse> getAll(Pageable pageable) {
+        return rentalRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Override
-    public DeleteResponse delete(Long id, br.ucsal.dto.rental.DeleteRequest request) {
+    public DeleteResponse delete(Long id, DeleteRequest request) {
         var optionalRental = rentalRepository.findById(id);
-
         if (optionalRental.isEmpty()) {
             return new DeleteResponse(false, "Aluguel não encontrado.");
         }
@@ -96,33 +92,27 @@ public class RentalService implements IRentalService {
     }
 
     @Override
-    public List<Vehicle> getAvailableVehicles(AvailabilityRequest request) {
+    public Page<Vehicle> getAvailableVehicles(AvailabilityRequest request, Pageable pageable) {
         LocalDateTime now = LocalDateTime.now();
 
         if (request.startDate().isBefore(now) || request.endDate().isBefore(now)) {
             throw new IllegalArgumentException("Start date and end date must be in the future.");
         }
-
-        var vehicles = rentalRepository.findAvailableVehiclesBetween(request.startDate(), request.endDate());
-
-        return vehicles.stream()
-                .filter(vehicle -> request.category().map(category -> vehicle.getCategory().equals(category))
-                        .orElse(true))
-                .filter(vehicle -> request.fuelType().map(fuelType -> vehicle.getFuelType().equals(fuelType))
-                        .orElse(true))
-                .filter(vehicle -> request.startYear().map(startYear -> vehicle.getYear() >= startYear)
-                        .orElse(true))
-                .filter(vehicle -> request.endYear().map(endYear -> vehicle.getYear() <= endYear)
-                        .orElse(true))
-                .collect(Collectors.toList());
+        return rentalRepository.findAvailableVehiclesBetweenWithFilters(
+            request.startDate(),
+            request.endDate(),
+            request.category().orElse(null),
+            request.fuelType().orElse(null),
+            request.startYear().orElse(null),
+            request.endYear().orElse(null),
+            pageable
+        );
     }
 
     @Override
-    public List<RentalResponse> getRentalsByClientOrdered(Long clientId) {
-        var rentals = rentalRepository.findByClientIdOrderByStatusPriority(clientId);
-        return rentals.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<RentalResponse> getRentalsByClientOrdered(Long clientId, Pageable pageable) {
+        return rentalRepository.findByClientIdOrderByStatusPriority(clientId, pageable)
+                .map(this::mapToResponse);
     }
 
     private RentalResponse mapToResponse(Rental r) {
@@ -143,5 +133,4 @@ public class RentalService implements IRentalService {
     private boolean datesOverlap(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
         return !start1.isAfter(end2) && !start2.isAfter(end1);
     }
-
 }

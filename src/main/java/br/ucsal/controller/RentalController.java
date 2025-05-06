@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/rentals")
@@ -29,12 +29,6 @@ public class RentalController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NotFoundResponse(id, "Rental"));
         }
-    }
-
-    @GetMapping
-    @Operation(summary = "List all rentals", description = "Retrieve all registered rentals.")
-    public ResponseEntity<List<RentalResponse>> getAll() {
-        return ResponseEntity.ok(rentalService.getAll());
     }
 
     @PostMapping
@@ -61,21 +55,30 @@ public class RentalController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @GetMapping
+    @Operation(summary = "Get paginated rentals", description = "Retrieve all registered rentals with pagination.")
+    public ResponseEntity<Page<RentalResponse>> getAll(Pageable pageable) {
+        Page<RentalResponse> rentals = rentalService.getAll(pageable);
+        return ResponseEntity.ok(rentals);
+    }
+
     @GetMapping("/client/{clientId}")
-    @Operation(summary = "List rentals for a client", description = "Retrieve rentals for a specific client, ordered by status priority.")
-    public ResponseEntity<List<RentalResponse>> getClientRentals(@PathVariable Long clientId) {
-        var rentals = rentalService.getRentalsByClientOrdered(clientId);
+    @Operation(summary = "Get paginated rentals for a client", description = "Retrieve rentals for a specific client, ordered by status priority with pagination.")
+    public ResponseEntity<Page<RentalResponse>> getClientRentals(@PathVariable Long clientId, Pageable pageable) {
+        Page<RentalResponse> rentals = rentalService.getRentalsByClientOrdered(clientId, pageable);
         return ResponseEntity.ok(rentals);
     }
 
     @PostMapping("/available")
-    @Operation(summary = "List available vehicles", description = "Retrieve all vehicles available for rent in a given date range.")
-    public ResponseEntity<?> getAvailableVehicles(@RequestBody AvailabilityRequest request) {
+    @Operation(summary = "Get paginated available vehicles", description = "Retrieve all vehicles available for rent in a given date range with pagination.")
+    public ResponseEntity<?> getAvailableVehicles(
+        @RequestBody AvailabilityRequest request, Pageable pageable) {
+        
         if (request.startDate() == null || request.endDate() == null) {
             return ResponseEntity.badRequest().body("Both startDate and endDate are required.");
         }
 
-        var availableVehicles = rentalService.getAvailableVehicles(request);
+        var availableVehicles = rentalService.getAvailableVehicles(request, pageable);
         return ResponseEntity.ok(availableVehicles);
     }
 
