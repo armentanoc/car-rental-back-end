@@ -1,7 +1,5 @@
 package br.ucsal.controller;
 
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,7 @@ public class UserController {
         Page<UserResponse> response = userService.getAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-	
+
 	@PostMapping
 	@Operation(summary = "Create a user", description = "Create a user passing all user information")
 	public ResponseEntity<AddUserResponse> create(@RequestBody UserRequest dto) {
